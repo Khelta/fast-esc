@@ -2,12 +2,14 @@ from fastapi import FastAPI
 
 from database import create_db_and_tables
 from routers.dataimport import contest, country, song
+from routers.models import person
 
 app = FastAPI()
 
 app.include_router(country.router)
 app.include_router(contest.router)
 app.include_router(song.router)
+app.include_router(person.router)
 
 
 @app.on_event("startup")

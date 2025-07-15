@@ -1,4 +1,11 @@
-from sqlmodel import Field, Session, SQLModel, select
+from typing import TYPE_CHECKING
+
+from sqlmodel import Field, Relationship, Session, SQLModel, select
+
+from models.artist_affiliation import ArtistAffiliationPublic
+
+if TYPE_CHECKING:
+    from models.artist_affiliation import ArtistAffiliation
 
 
 class PersonBase(SQLModel):
@@ -8,6 +15,12 @@ class PersonBase(SQLModel):
 class Person(PersonBase, table=True):
     id: int | None = Field(default=None, primary_key=True)
 
+    affiliations: list["ArtistAffiliation"] = Relationship(back_populates="person")
+
+
+class PersonCreate(PersonBase):
+    pass
+
 
 class PersonWithId(PersonBase):
     id: int
@@ -15,6 +28,10 @@ class PersonWithId(PersonBase):
 
 class PersonPublic(PersonBase):
     id: int
+
+
+class PersonPublicWithAffiliations(PersonPublic):
+    affiliations: list[ArtistAffiliationPublic] = []
 
 
 def get_or_create_person(session: Session, input_data: Person):

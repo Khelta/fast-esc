@@ -1,4 +1,9 @@
-from sqlmodel import Field, Session, SQLModel, select
+from typing import TYPE_CHECKING, Optional
+
+from sqlmodel import Field, Relationship, Session, SQLModel, select
+
+if TYPE_CHECKING:
+    from models.person import Person
 
 
 class ArtistAffiliationBase(SQLModel):
@@ -11,6 +16,8 @@ class ArtistAffiliationBase(SQLModel):
 
 class ArtistAffiliation(ArtistAffiliationBase, table=True):
     id: int | None = Field(default=None, primary_key=True)
+
+    person: Optional["Person"] = Relationship(back_populates="affiliations")
 
 
 class ArtistAffiliationWithId(ArtistAffiliationBase):

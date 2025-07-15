@@ -14,7 +14,7 @@ from models.participation import Participation, get_or_create_participation
 from models.person import Person, get_or_create_person
 from models.song import Song, get_or_create_song
 
-router = APIRouter(prefix="/data_import")
+router = APIRouter(prefix="/data_import", tags=["import"])
 
 
 @router.post("/songs/", response_model=list[DataImportSong])

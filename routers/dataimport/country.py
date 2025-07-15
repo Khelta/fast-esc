@@ -4,7 +4,8 @@ from sqlmodel import Session, select
 from database import get_session
 from models.country import Country
 
-router = APIRouter(prefix="/data_import")
+router = APIRouter(prefix="/data_import", tags=["import"])
+
 
 @router.post("/countries/", response_model=list[Country])
 def import_country_data(
@@ -22,9 +23,9 @@ def import_country_data(
             db_country = Country(name=country.name, alpha2=country.alpha2)
             session.add(db_country)
         result.append(db_country)
-    
+
     session.commit()
     for obj in result:
         session.refresh(obj)
-    
+
     return result

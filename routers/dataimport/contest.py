@@ -13,7 +13,7 @@ from models.host import Host, get_or_create_host
 from models.location import Location, get_or_create_location
 from models.person import Person, get_or_create_person
 
-router = APIRouter(prefix="/data_import")
+router = APIRouter(prefix="/data_import", tags=["import"])
 
 
 @router.post("/contests/", response_model=list[DataImportContest])

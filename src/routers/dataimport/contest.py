@@ -3,15 +3,15 @@ from datetime import datetime
 from fastapi import APIRouter, Depends, HTTPException
 from sqlmodel import Session, select
 
-from database import get_session
-from models.broadcaster import Broadcaster, get_or_create_broadcaster
-from models.city import City, get_or_create_city
-from models.contest import Contest, get_or_create_contest
-from models.country import Country
-from models.data_import import DataImportContest
-from models.host import Host, get_or_create_host
-from models.location import Location, get_or_create_location
-from models.person import Person, get_or_create_person
+from src.database import get_session
+from src.models.broadcaster import Broadcaster, get_or_create_broadcaster
+from src.models.city import City, get_or_create_city
+from src.models.contest import Contest, get_or_create_contest
+from src.models.country import Country
+from src.models.data_import import DataImportContest
+from src.models.host import Host, get_or_create_host
+from src.models.location import Location, get_or_create_location
+from src.models.person import Person, get_or_create_person
 
 router = APIRouter(prefix="/data_import", tags=["import"])
 

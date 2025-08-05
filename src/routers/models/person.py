@@ -1,8 +1,8 @@
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlmodel import Session, select
 
-from database import get_session
-from models.person import (
+from src.database import get_session
+from src.models.person import (
     Person,
     PersonCreate,
     PersonPublic,

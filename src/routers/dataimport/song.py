@@ -1,18 +1,18 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlmodel import Session, select
 
-from database import get_session
-from models.artist import Artist, get_or_create_artist
-from models.artist_affiliation import (
+from src.database import get_session
+from src.models.artist import Artist, get_or_create_artist
+from src.models.artist_affiliation import (
     ArtistAffiliation,
     get_or_create_artist_affiliation,
 )
-from models.contest import get_contest_by_year_and_final
-from models.country import Country
-from models.data_import import DataImportSong
-from models.participation import Participation, get_or_create_participation
-from models.person import Person, get_or_create_person
-from models.song import Song, get_or_create_song
+from src.models.contest import get_contest_by_year_and_final
+from src.models.country import Country
+from src.models.data_import import DataImportSong
+from src.models.participation import Participation, get_or_create_participation
+from src.models.person import Person, get_or_create_person
+from src.models.song import Song, get_or_create_song
 
 router = APIRouter(prefix="/data_import", tags=["import"])
 

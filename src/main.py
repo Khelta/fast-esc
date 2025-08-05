@@ -1,8 +1,8 @@
 from fastapi import FastAPI
 
-from database import create_db_and_tables
-from routers.dataimport import contest, country, song
-from routers.models import person
+from src.database import create_db_and_tables
+from src.routers.dataimport import contest, country, song
+from src.routers.models import person
 
 app = FastAPI()
 

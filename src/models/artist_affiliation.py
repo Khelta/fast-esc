@@ -3,7 +3,7 @@ from typing import TYPE_CHECKING, Optional
 from sqlmodel import Field, Relationship, Session, SQLModel, select
 
 if TYPE_CHECKING:
-    from models.person import Person
+    from src.models.person import Person
 
 
 class ArtistAffiliationBase(SQLModel):

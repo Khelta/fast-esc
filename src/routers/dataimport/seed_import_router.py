@@ -7,7 +7,7 @@ from src.seed import seed_database
 router = APIRouter(prefix="/data_import", tags=["import"])
 
 
-@router.get("/songs/", response_model=str)
+@router.get("/seed_init/", response_model=str)
 def seed_init_database(*, session: Session = Depends(get_session)):
     seed_database(session)
     return "Seeding complete"

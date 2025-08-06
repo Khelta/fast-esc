@@ -1,27 +1,24 @@
-import requests
 import json
 
-from collections import defaultdict
+import requests
+from sqlmodel import Session
 
-from src.database import get_session
 from src.models.country import Country
 from src.models.data_import import DataImportContest, DataImportSong
-from src.routers.dataimport.contest import import_contest_data
-from src.routers.dataimport.country import import_country_data
-from src.routers.dataimport.song import import_song_data
-
+from src.routers.dataimport.contest_import_router import import_contest_data
+from src.routers.dataimport.country_import_router import import_country_data
+from src.routers.dataimport.song_import_router import import_song_data
 
 BASE_URL = "https://raw.githubusercontent.com/Khelta/eurovision-scraper/refs/heads/master/data/"
 
 
-def seed_database():
-    seed_countries()
-    seed_contest()
-    seed_songs()
+def seed_database(session: Session):
+    seed_countries(session)
+    seed_contest(session)
+    seed_songs(session)
 
 
-def seed_countries():
-    session = next(get_session())
+def seed_countries(session: Session):
     r = requests.request("GET", BASE_URL + "country_codes.json")
     try:
         request_data = json.loads(r.text)
@@ -31,8 +28,7 @@ def seed_countries():
         print(f"HTTP error occured: {e}")
 
 
-def seed_contest():
-    session = next(get_session())
+def seed_contest(session: Session):
     r = requests.request("GET", BASE_URL + "contest.json")
     try:
         request_data = json.loads(r.text)
@@ -45,8 +41,7 @@ def seed_contest():
         raise e
 
 
-def seed_songs():
-    session = next(get_session())
+def seed_songs(session: Session):
     r = requests.request("GET", BASE_URL + "songs.json")
     try:
         request_data = json.loads(r.text)

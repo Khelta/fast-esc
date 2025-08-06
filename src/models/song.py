@@ -1,4 +1,4 @@
-from sqlmodel import Field, Session, SQLModel, select
+from sqlmodel import Field, SQLModel
 
 
 class SongBase(SQLModel):
@@ -18,24 +18,3 @@ class SongWithId(SongBase):
 
 class SongPublic(SongBase):
     id: int
-
-
-def get_or_create_song(session: Session, input_data: Song):
-    if input_data.id:
-        instance = session.get(Song, input_data.id)
-    else:
-        instance = session.exec(
-            select(Song).where(
-                Song.title == input_data.title
-                and Song.artist_id == input_data.artist_id
-                and Song.country_id == input_data.country_id
-            )
-        ).first()
-
-    if not instance:
-        instance = Song(**input_data.model_dump())
-        session.add(instance)
-        session.commit()
-        session.refresh(instance)
-
-    return SongWithId(**instance.model_dump())

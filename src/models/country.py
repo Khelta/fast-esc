@@ -11,3 +11,7 @@ class Country(CountryBase, table=True):
 
 class CountryPublic(CountryBase):
     id: int
+
+
+class CountryWithId(CountryBase):
+    id: int

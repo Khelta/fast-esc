@@ -26,12 +26,8 @@ class DataImportContest(BaseModel):
         return datetime.strptime(date, "%d.%m.%Y").date()
 
 
-class DataImportSong(BaseModel):
+class DataImportParticipation(BaseModel):
     country: str = Field(examples=["ch"])
-    final: int = Field(
-        description="Decodes if the contest is a final (0) or semi-final (1) or (2)",
-        examples=[0, 1, 2],
-    )
     artist: str = Field(examples=["Lys Assia"])
     title: str = Field(examples=["Refrain"])
     place: int | None = None
@@ -44,3 +40,11 @@ class DataImportSong(BaseModel):
         description="Dict where the keys are the role and the value is a list of all people who have this role.",
         examples=[{"ARTIST": ["Lys Assia"], "COMPOSER": ["G\u00e9o Voumard"]}],
     )
+
+class DataImportSong(BaseModel):
+    year: int
+    final: int = Field(
+        description="Decodes if the contest is a final (0) or semi-final (1) or (2)",
+        examples=[0, 1, 2],
+    )
+    participations: list[DataImportParticipation]

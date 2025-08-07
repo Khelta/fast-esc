@@ -1,10 +1,32 @@
+import os
+
+from dotenv import load_dotenv
 from sqlmodel import Session, create_engine, SQLModel
 
-sqlite_file_name = "./database.db"
-sqlite_url = f"sqlite:///{sqlite_file_name}"
+env_paths = [
+    os.path.join("/etc/secrets", ".env"),
+    os.path.join(os.getcwd(), ".env"),
+]
 
-connect_args = {"check_same_thread": False}
-engine = create_engine(sqlite_url, echo=True, connect_args=connect_args)
+env_path = next((path for path in env_paths if os.path.exists(path)), None)
+
+if env_path:
+    load_dotenv(dotenv_path=env_path, override=True)  # Override allows overriding existing env vars
+    print(f"Loaded .env from {env_path}")
+
+DATABASE_USERNAME = os.getenv("DATABASE_USERNAME")
+DATABASE_PASSWORD = os.getenv("DATABASE_PASSWORD")
+DATABASE_HOST = os.getenv("DATABASE_HOST")
+DATABASE_PORT = os.getenv("DATABASE_PORT")
+DATABASE_NAME = os.getenv("DATABASE_NAME")
+
+DATABASE_URL = "postgresql://{}:{}@{}:{}/{}".format(DATABASE_USERNAME,
+                                                    DATABASE_PASSWORD,
+                                                    DATABASE_HOST,
+                                                    DATABASE_PORT,
+                                                    DATABASE_NAME)
+
+engine = create_engine(DATABASE_URL, echo=True)
 
 
 def create_db_and_tables():

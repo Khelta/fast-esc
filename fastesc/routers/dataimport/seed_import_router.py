@@ -1,8 +1,8 @@
 from fastapi import APIRouter, Depends
 from sqlmodel import Session
 
-from src.database import get_session
-from src.seed import seed_database
+from fastesc.database import get_session
+from fastesc.seed import seed_database
 
 router = APIRouter(prefix="/data_import", tags=["import"])
 

@@ -1,8 +1,9 @@
 from fastapi import FastAPI
 
-from src.database import create_db_and_tables
-from src.routers.dataimport import contest_import_router, country_import_router, song_import_router, seed_import_router
-from src.routers.models import person_router
+from fastesc.database import create_db_and_tables
+from fastesc.routers.dataimport import contest_import_router, country_import_router, song_import_router, \
+    seed_import_router
+from fastesc.routers.models import person_router
 
 app = FastAPI()
 

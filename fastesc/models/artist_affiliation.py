@@ -3,7 +3,7 @@ from typing import TYPE_CHECKING, Optional
 from sqlmodel import Field, Relationship, SQLModel
 
 if TYPE_CHECKING:
-    from src.models.person import Person
+    from fastesc.models.person import Person
 
 
 class ArtistAffiliationBase(SQLModel):

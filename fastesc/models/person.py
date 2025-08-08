@@ -2,10 +2,10 @@ from typing import TYPE_CHECKING
 
 from sqlmodel import Field, Relationship, SQLModel
 
-from src.models.artist_affiliation import ArtistAffiliationPublic
+from fastesc.models.artist_affiliation import ArtistAffiliationPublic
 
 if TYPE_CHECKING:
-    from src.models.artist_affiliation import ArtistAffiliation
+    from fastesc.models.artist_affiliation import ArtistAffiliation
 
 
 class PersonBase(SQLModel):

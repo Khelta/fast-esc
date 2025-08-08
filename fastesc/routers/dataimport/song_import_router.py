@@ -1,20 +1,20 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlmodel import Session
 
-from src.database import get_session
-from src.models.artist import Artist
-from src.models.artist_affiliation import ArtistAffiliation
-from src.models.data_import import DataImportSong
-from src.models.participation import Participation
-from src.models.person import Person
-from src.models.song import Song
-from src.repositories.artist_affiliation_repo import get_or_create_artist_affiliation
-from src.repositories.artist_repo import get_or_create_artist
-from src.repositories.contest_repo import get_contest_by_year_and_final
-from src.repositories.country_repo import get_country_by_alpha2
-from src.repositories.participation_repo import get_or_create_participation
-from src.repositories.person_repo import get_or_create_person
-from src.repositories.song_repo import get_or_create_song
+from fastesc.database import get_session
+from fastesc.models.artist import Artist
+from fastesc.models.artist_affiliation import ArtistAffiliation
+from fastesc.models.data_import import DataImportSong
+from fastesc.models.participation import Participation
+from fastesc.models.person import Person
+from fastesc.models.song import Song
+from fastesc.repositories.artist_affiliation_repo import get_or_create_artist_affiliation
+from fastesc.repositories.artist_repo import get_or_create_artist
+from fastesc.repositories.contest_repo import get_contest_by_year_and_final
+from fastesc.repositories.country_repo import get_country_by_alpha2
+from fastesc.repositories.participation_repo import get_or_create_participation
+from fastesc.repositories.person_repo import get_or_create_person
+from fastesc.repositories.song_repo import get_or_create_song
 
 router = APIRouter(prefix="/data_import", tags=["import"])
 

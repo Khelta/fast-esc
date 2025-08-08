@@ -3,21 +3,21 @@ from datetime import datetime
 from fastapi import APIRouter, Depends, HTTPException
 from sqlmodel import Session
 
-from src.database import get_session
-from src.models.broadcaster import Broadcaster
-from src.models.city import City
-from src.models.contest import Contest
-from src.models.data_import import DataImportContest
-from src.models.host import Host
-from src.models.location import Location
-from src.models.person import Person
-from src.repositories.broadcaster_repo import get_or_create_broadcaster
-from src.repositories.city_repo import get_or_create_city
-from src.repositories.contest_repo import get_or_create_contest
-from src.repositories.country_repo import get_country_by_county_name
-from src.repositories.host_repo import get_or_create_host
-from src.repositories.location_repo import get_or_create_location
-from src.repositories.person_repo import get_or_create_person
+from fastesc.database import get_session
+from fastesc.models.broadcaster import Broadcaster
+from fastesc.models.city import City
+from fastesc.models.contest import Contest
+from fastesc.models.data_import import DataImportContest
+from fastesc.models.host import Host
+from fastesc.models.location import Location
+from fastesc.models.person import Person
+from fastesc.repositories.broadcaster_repo import get_or_create_broadcaster
+from fastesc.repositories.city_repo import get_or_create_city
+from fastesc.repositories.contest_repo import get_or_create_contest
+from fastesc.repositories.country_repo import get_country_by_county_name
+from fastesc.repositories.host_repo import get_or_create_host
+from fastesc.repositories.location_repo import get_or_create_location
+from fastesc.repositories.person_repo import get_or_create_person
 
 router = APIRouter(prefix="/data_import", tags=["import"])
 

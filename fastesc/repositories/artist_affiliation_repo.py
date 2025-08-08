@@ -1,6 +1,6 @@
 from sqlmodel import Session, select
 
-from src.models.artist_affiliation import ArtistAffiliation, ArtistAffiliationWithId
+from fastesc.models.artist_affiliation import ArtistAffiliation, ArtistAffiliationWithId
 
 
 def get_or_create_artist_affiliation(session: Session, input_data: ArtistAffiliation):

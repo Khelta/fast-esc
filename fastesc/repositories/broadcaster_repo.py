@@ -1,6 +1,6 @@
 from sqlmodel import Session, select
 
-from src.models.broadcaster import Broadcaster, BroadcasterWithId
+from fastesc.models.broadcaster import Broadcaster, BroadcasterWithId
 
 
 def get_or_create_broadcaster(session: Session, input_data: Broadcaster):

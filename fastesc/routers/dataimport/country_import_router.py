@@ -1,9 +1,9 @@
 from fastapi import APIRouter, Depends
 from sqlmodel import Session
 
-from src.database import get_session
-from src.models.country import Country
-from src.repositories.country_repo import get_or_create_country
+from fastesc.database import get_session
+from fastesc.models.country import Country
+from fastesc.repositories.country_repo import get_or_create_country
 
 router = APIRouter(prefix="/data_import", tags=["import"])
 

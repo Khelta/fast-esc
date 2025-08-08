@@ -1,8 +1,8 @@
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlmodel import Session, select
 
-from src.database import get_session
-from src.models.person import (
+from fastesc.database import get_session
+from fastesc.models.person import (
     Person,
     PersonCreate,
     PersonPublic,
@@ -18,10 +18,10 @@ router = APIRouter(prefix="/people", tags=["people"])
     description="Gets all people from the database.",
 )
 def get_people(
-    *,
-    session: Session = Depends(get_session),
-    offset: int = 0,
-    limit: int = Query(default=100, le=100),
+        *,
+        session: Session = Depends(get_session),
+        offset: int = 0,
+        limit: int = Query(default=100, le=100),
 ):
     people = session.exec(select(Person).offset(offset).limit(limit)).all()
     return people
@@ -41,7 +41,7 @@ def get_person(*, session: Session = Depends(get_session), person_id: int):
 
 @router.post("/", response_model=PersonPublic)
 def get_or_create_person(
-    *, session: Session = Depends(get_session), person: PersonCreate
+        *, session: Session = Depends(get_session), person: PersonCreate
 ):
     # Check if the person already exists
     existing_person = session.exec(

@@ -1,6 +1,6 @@
 from sqlmodel import Session, select
 
-from src.models.host import Host, HostWithId
+from fastesc.models.host import Host, HostWithId
 
 
 def get_or_create_host(session: Session, input_data: Host):

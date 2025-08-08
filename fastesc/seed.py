@@ -5,9 +5,9 @@ from sqlmodel import Session
 
 from fastesc.api.models import DataImportContest, DataImportSong
 from fastesc.api.models.country import Country
-from fastesc.routers.dataimport.contest_import_router import import_contest_data
-from fastesc.routers.dataimport.country_import_router import import_country_data
-from fastesc.routers.dataimport.song_import_router import import_song_data
+from fastesc.api.routers import import_country_data
+from fastesc.api.routers.dataimport.contest_import_router import import_contest_data
+from fastesc.api.routers.dataimport.song_import_router import import_song_data
 
 BASE_URL = "https://raw.githubusercontent.com/Khelta/eurovision-scraper/refs/heads/master/data/"
 

@@ -3,8 +3,8 @@ import json
 import requests
 from sqlmodel import Session
 
-from fastesc.models.country import Country
-from fastesc.models.data_import import DataImportContest, DataImportSong
+from fastesc.api.models import DataImportContest, DataImportSong
+from fastesc.api.models.country import Country
 from fastesc.routers.dataimport.contest_import_router import import_contest_data
 from fastesc.routers.dataimport.country_import_router import import_country_data
 from fastesc.routers.dataimport.song_import_router import import_song_data

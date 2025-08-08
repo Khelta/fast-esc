@@ -1,6 +1,6 @@
 from sqlmodel import Session, select
 
-from fastesc.models.country import Country, CountryWithId
+from fastesc.api.models.country import Country, CountryWithId
 
 
 def get_or_create_country(session: Session, input_data: Country):

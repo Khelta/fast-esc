@@ -1,13 +1,13 @@
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlmodel import Session, select
 
-from fastesc.database import get_session
-from fastesc.models.person import (
+from fastesc.api.models import (
     Person,
     PersonCreate,
     PersonPublic,
     PersonPublicWithAffiliations,
 )
+from fastesc.database import get_session
 
 router = APIRouter(prefix="/people", tags=["people"])
 

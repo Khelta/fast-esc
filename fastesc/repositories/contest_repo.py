@@ -1,6 +1,6 @@
 from sqlmodel import Session, select, func
 
-from fastesc.models.contest import Contest, ContestWithId
+from fastesc.api.models import Contest, ContestWithId
 
 
 def get_or_create_contest(session: Session, input_data: Contest) -> ContestWithId:

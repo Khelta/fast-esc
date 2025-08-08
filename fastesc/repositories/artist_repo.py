@@ -1,6 +1,6 @@
 from sqlmodel import Session, select
 
-from fastesc.models.artist import Artist, ArtistWithId
+from fastesc.api.models import Artist, ArtistWithId
 
 
 def get_or_create_artist(session: Session, input_data: Artist):

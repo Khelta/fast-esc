@@ -1,13 +1,13 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlmodel import Session
 
+from fastesc.api.models import Artist
+from fastesc.api.models import ArtistAffiliation
+from fastesc.api.models import DataImportSong
+from fastesc.api.models import Person
+from fastesc.api.models import Song
+from fastesc.api.models.participation import Participation
 from fastesc.database import get_session
-from fastesc.models.artist import Artist
-from fastesc.models.artist_affiliation import ArtistAffiliation
-from fastesc.models.data_import import DataImportSong
-from fastesc.models.participation import Participation
-from fastesc.models.person import Person
-from fastesc.models.song import Song
 from fastesc.repositories.artist_affiliation_repo import get_or_create_artist_affiliation
 from fastesc.repositories.artist_repo import get_or_create_artist
 from fastesc.repositories.contest_repo import get_contest_by_year_and_final

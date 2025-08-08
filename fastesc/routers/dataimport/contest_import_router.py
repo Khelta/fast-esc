@@ -3,14 +3,14 @@ from datetime import datetime
 from fastapi import APIRouter, Depends, HTTPException
 from sqlmodel import Session
 
+from fastesc.api.models import Broadcaster
+from fastesc.api.models import City
+from fastesc.api.models import Contest
+from fastesc.api.models import DataImportContest
+from fastesc.api.models import Host
+from fastesc.api.models import Location
+from fastesc.api.models import Person
 from fastesc.database import get_session
-from fastesc.models.broadcaster import Broadcaster
-from fastesc.models.city import City
-from fastesc.models.contest import Contest
-from fastesc.models.data_import import DataImportContest
-from fastesc.models.host import Host
-from fastesc.models.location import Location
-from fastesc.models.person import Person
 from fastesc.repositories.broadcaster_repo import get_or_create_broadcaster
 from fastesc.repositories.city_repo import get_or_create_city
 from fastesc.repositories.contest_repo import get_or_create_contest

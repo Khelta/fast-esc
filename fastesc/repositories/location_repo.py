@@ -1,6 +1,6 @@
 from sqlmodel import Session, select
 
-from fastesc.models.location import Location, LocationWithId
+from fastesc.api.models import Location, LocationWithId
 
 
 def get_or_create_location(session: Session, input_data: Location):

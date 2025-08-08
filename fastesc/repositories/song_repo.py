@@ -1,6 +1,6 @@
 from sqlmodel import Session, select
 
-from fastesc.models.song import Song, SongWithId
+from fastesc.api.models import Song, SongWithId
 
 
 def get_or_create_song(session: Session, input_data: Song):

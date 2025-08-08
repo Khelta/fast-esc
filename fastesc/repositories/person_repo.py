@@ -1,6 +1,6 @@
 from sqlmodel import Session, select
 
-from fastesc.models.person import Person, PersonWithId
+from fastesc.api.models import Person, PersonWithId
 
 
 def get_or_create_person(session: Session, input_data: Person):

@@ -1,6 +1,6 @@
 from sqlmodel import Session, select
 
-from fastesc.models.city import City, CityWithId
+from fastesc.api.models import City, CityWithId
 
 
 def get_or_create_city(session: Session, input_data: City):

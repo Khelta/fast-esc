@@ -1,6 +1,6 @@
 from sqlmodel import Session, select
 
-from fastesc.models.participation import Participation, ParticipationWithId
+from fastesc.api.models.participation import Participation, ParticipationWithId
 
 
 def get_or_create_participation(session: Session, input_data: Participation):

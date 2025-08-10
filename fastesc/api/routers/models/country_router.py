@@ -3,7 +3,7 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException
 
 from fastesc.api.dependencies import get_repository
-from fastesc.api.models.country import CountryBase, CountryPublic
+from fastesc.api.models.models import CountryBase, CountryPublic
 from fastesc.database.models.models import Country
 from fastesc.database.repositories.base_repo import DatabaseRepository
 

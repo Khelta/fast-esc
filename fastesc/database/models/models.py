@@ -1,0 +1,157 @@
+from typing import List
+
+from sqlalchemy import String, ForeignKey, CheckConstraint, Table, Column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
+
+from fastesc.database.models.base import Base
+
+
+class Artist(Base):
+    __tablename__ = 'artist'
+
+    name: Mapped[str] = mapped_column("name", nullable=False)
+
+    affiliations: Mapped[List["ArtistAffiliation"]] = relationship(back_populates="artist", lazy="selectin")
+    songs: Mapped[List["Song"]] = relationship(back_populates="artist", lazy="selectin")
+
+    class Config:
+        orm_mode = True
+
+
+class ArtistAffiliation(Base):
+    __tablename__ = 'artist_affiliation'
+
+    role: Mapped[str] = mapped_column("role", nullable=False)
+
+    person_id: Mapped[int] = mapped_column(ForeignKey("person.id"), nullable=False)
+    person: Mapped["Person"] = relationship(back_populates="affiliations")
+    artist_id: Mapped[int] = mapped_column(ForeignKey("artist.id"), nullable=False)
+    artist: Mapped["Artist"] = relationship(back_populates="affiliations")
+    contest_id: Mapped[int] = mapped_column(ForeignKey("contest.id"), nullable=False)
+    contest: Mapped["Contest"] = relationship(back_populates="affiliations")
+
+    class Config:
+        orm_mode = True
+
+
+class Broadcaster(Base):
+    __tablename__ = 'broadcaster'
+
+    name: Mapped[str] = mapped_column("name", nullable=False)
+
+    country_id: Mapped[int] = mapped_column(ForeignKey("country.id"))
+    country: Mapped["Country"] = relationship(back_populates="broadcasters")
+
+    contests: Mapped[List["Contest"]] = relationship(back_populates="broadcaster", lazy="selectin")
+
+    class Config:
+        orm_mode = True
+
+
+class City(Base):
+    __tablename__ = 'city'
+
+    name: Mapped[str] = mapped_column("name", nullable=False)
+
+    country_id: Mapped[int] = mapped_column(ForeignKey("country.id"))
+    country: Mapped["Country"] = relationship(back_populates="cities")
+
+    locations: Mapped[List["Location"]] = relationship(back_populates="city", lazy="selectin")
+
+    class Config:
+        orm_mode = True
+
+
+class Contest(Base):
+    __tablename__ = 'contest'
+
+    date: Mapped[str] = mapped_column("date", nullable=False)
+    final: Mapped[int] = mapped_column("final", nullable=False)
+
+    location_id: Mapped[int] = mapped_column(ForeignKey("location.id"))
+    location: Mapped["Location"] = relationship(back_populates="contests")
+    broadcaster_id: Mapped[int] = mapped_column(ForeignKey("broadcaster.id"))
+    broadcaster: Mapped["Broadcaster"] = relationship(back_populates="contests")
+
+    participations: Mapped[List["Participation"]] = relationship(back_populates="contest", lazy="selectin")
+    affiliations: Mapped[List["ArtistAffiliation"]] = relationship(back_populates="contest", lazy="selectin")
+
+    __table_args__ = (
+        CheckConstraint("final BETWEEN 0 AND 2", name="final_value_check"),
+    )
+
+    class Config:
+        orm_mode = True
+
+
+class Country(Base):
+    __tablename__ = 'country'
+
+    name: Mapped[str] = mapped_column("name", nullable=False)
+    alpha2: Mapped[str] = mapped_column("alpha2", String(length=2), nullable=False)
+
+    cities: Mapped[List["City"]] = relationship(back_populates="country", lazy="selectin")
+    broadcasters: Mapped[List["Broadcaster"]] = relationship(back_populates="country", lazy="selectin")
+    songs: Mapped[List["Song"]] = relationship(back_populates="country", lazy="selectin")
+
+    class Config:
+        orm_mode = True
+
+
+class Location(Base):
+    __tablename__ = 'location'
+
+    name: Mapped[str] = mapped_column("name", nullable=False)
+
+    city_id: Mapped[int] = mapped_column(ForeignKey("city.id"))
+    city: Mapped["City"] = relationship(back_populates="locations")
+
+    contests: Mapped[List["Contest"]] = relationship(back_populates="location", lazy="selectin")
+
+    class Config:
+        orm_mode = True
+
+
+class Participation(Base):
+    __tablename__ = 'participation'
+
+    place: Mapped[int] = mapped_column("place")
+    running: Mapped[int] = mapped_column("running")
+    points: Mapped[int] = mapped_column("points")
+    jury_points: Mapped[int] = mapped_column("jury_points")
+    public_points: Mapped[int] = mapped_column("public_points")
+
+    song_id: Mapped[int] = mapped_column(ForeignKey("song.id"))
+    song: Mapped["Song"] = relationship(back_populates="participations")
+    contest_id: Mapped[int] = mapped_column(ForeignKey("contest.id"))
+    contest: Mapped["Contest"] = relationship(back_populates="participations")
+
+    class Config:
+        orm_mode = True
+
+
+class Person(Base):
+    __tablename__ = 'person'
+
+    name: Mapped[str] = mapped_column("name", nullable=False)
+
+    affiliations: Mapped[List["ArtistAffiliation"]] = relationship(back_populates="person", lazy="selectin")
+
+    class Config:
+        orm_mode = True
+
+
+class Song(Base):
+    __tablename__ = 'song'
+
+    title: Mapped[str] = mapped_column("title", nullable=False)
+
+    country_id: Mapped[int] = mapped_column(ForeignKey("country.id"))
+    country: Mapped["Country"] = relationship(back_populates="songs")
+    artist_id: Mapped[int] = mapped_column(ForeignKey("artist.id"))
+    artist: Mapped["Artist"] = relationship(back_populates="songs")
+
+    participations: Mapped[List["Participation"]] = relationship(back_populates="song", lazy="selectin")
+
+    class Config:
+        orm_mode = True

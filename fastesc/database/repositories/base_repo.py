@@ -1,4 +1,3 @@
-import uuid
 from typing import Generic, TypeVar
 
 from sqlalchemy import BinaryExpression, select
@@ -21,8 +20,8 @@ class DatabaseRepository(Generic[Model]):
         await self.session.refresh(instance)
         return instance
 
-    async def get(self, pk: uuid.UUID) -> Model | None:
-        return await self.session.get(self.model, pk)
+    async def get(self, id: int) -> Model | None:
+        return await self.session.get(self.model, id)
 
     async def filter(
             self,

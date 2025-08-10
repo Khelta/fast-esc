@@ -11,21 +11,21 @@ class Artist(Base):
 
     name: Mapped[str] = mapped_column("name", nullable=False)
 
-    affiliations: Mapped[List["ArtistAffiliation"]] = relationship(back_populates="artist", lazy="selectin")
+    affiliations: Mapped[List["Affiliation"]] = relationship(back_populates="artist", lazy="selectin")
     songs: Mapped[List["Song"]] = relationship(back_populates="artist", lazy="selectin")
 
     class Config:
         orm_mode = True
 
 
-class ArtistAffiliation(Base):
-    __tablename__ = 'artist_affiliation'
+class Affiliation(Base):
+    __tablename__ = 'affiliation'
 
     role: Mapped[str] = mapped_column("role", nullable=False)
 
     person_id: Mapped[int] = mapped_column(ForeignKey("person.id"), nullable=False)
     person: Mapped["Person"] = relationship(back_populates="affiliations")
-    artist_id: Mapped[int] = mapped_column(ForeignKey("artist.id"), nullable=False)
+    artist_id: Mapped[int] = mapped_column(ForeignKey("artist.id"), nullable=True)
     artist: Mapped["Artist"] = relationship(back_populates="affiliations")
     contest_id: Mapped[int] = mapped_column(ForeignKey("contest.id"), nullable=False)
     contest: Mapped["Contest"] = relationship(back_populates="affiliations")
@@ -74,7 +74,7 @@ class Contest(Base):
     broadcaster: Mapped["Broadcaster"] = relationship(back_populates="contests")
 
     participations: Mapped[List["Participation"]] = relationship(back_populates="contest", lazy="selectin")
-    affiliations: Mapped[List["ArtistAffiliation"]] = relationship(back_populates="contest", lazy="selectin")
+    affiliations: Mapped[List["Affiliation"]] = relationship(back_populates="contest", lazy="selectin")
 
     __table_args__ = (
         CheckConstraint("final BETWEEN 0 AND 2", name="final_value_check"),
@@ -135,7 +135,7 @@ class Person(Base):
 
     name: Mapped[str] = mapped_column("name", nullable=False)
 
-    affiliations: Mapped[List["ArtistAffiliation"]] = relationship(back_populates="person", lazy="selectin")
+    affiliations: Mapped[List["Affiliation"]] = relationship(back_populates="person", lazy="selectin")
 
     class Config:
         orm_mode = True

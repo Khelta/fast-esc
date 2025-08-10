@@ -1,22 +1,28 @@
-from fastapi import APIRouter, Depends
-from sqlmodel import Session
+from typing import Annotated
 
-from fastesc.api.models.country import Country
-from fastesc.database import get_session
-from fastesc.repositories.country_repo import get_or_create_country
+from fastapi import APIRouter, Depends
+
+from fastesc.api.dependencies import get_repository
+from fastesc.api.models.models import CountryBase
+from fastesc.database.models.models import Country
+
+from fastesc.database.repositories.base_repo import DatabaseRepository
 
 router = APIRouter(prefix="/data_import", tags=["import"])
 
+CountryRepository = Annotated[
+    DatabaseRepository[Country],
+    Depends(get_repository(Country))
+]
 
-@router.post("/countries/", response_model=list[Country])
-def import_country_data(
-        *, session: Session = Depends(get_session), data: list[Country]
-):
+
+@router.post("/countries/", response_model=list[CountryBase])
+async def import_country_data(repository: CountryRepository, data: list[CountryBase]):
     result = []
 
-    for country in data:
-        Country.model_validate(country)
-        db_country = get_or_create_country(session, country)
-        result.append(db_country)
+    for c in data:
+        country = CountryBase.model_validate(c)
+        await repository.create(country.model_dump())
+        result.append(country)
 
     return result

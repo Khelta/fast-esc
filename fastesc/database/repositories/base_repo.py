@@ -23,6 +23,14 @@ class DatabaseRepository(Generic[Model]):
     async def get(self, id: int) -> Model | None:
         return await self.session.get(self.model, id)
 
+    async def get_or_create(self, data: dict) -> Model:
+        query = select(self.model).filter_by(**data)
+        instance = await self.session.scalar(query)
+        if instance:
+            return instance
+        else:
+            return await self.create(data)
+
     async def filter(
             self,
             *expressions: BinaryExpression,

@@ -1,3 +1,4 @@
+from datetime import date as dateClass
 from typing import List
 
 from pydantic import BaseModel, ConfigDict
@@ -10,13 +11,28 @@ class ArtistBase(BaseModel):
 
 
 class ArtistAffiliationBase(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
     role: str
+
+
+class BroadcasterBase(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    name: str
 
 
 class CityBase(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
     name: str
+
+
+class ContestBase(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    date: dateClass
+    final: int
 
 
 class CountryBase(BaseModel):
@@ -27,6 +43,12 @@ class CountryBase(BaseModel):
 
 
 class LocationBase(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    name: str
+
+
+class PersonBase(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
     name: str

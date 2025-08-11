@@ -1,69 +1,108 @@
 from datetime import datetime
+from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException
-from sqlmodel import Session
 
-from fastesc.api.models import Broadcaster
-from fastesc.api.models import City
-from fastesc.api.models import Contest
-from fastesc.api.models import DataImportContest
-from fastesc.api.models import Host
-from fastesc.api.models import Location
-from fastesc.api.models import Person
-from fastesc.database import get_session
-from fastesc.repositories.broadcaster_repo import get_or_create_broadcaster
-from fastesc.repositories.city_repo import get_or_create_city
-from fastesc.repositories.contest_repo import get_or_create_contest
-from fastesc.repositories.country_repo import get_country_by_county_name
-from fastesc.repositories.host_repo import get_or_create_host
-from fastesc.repositories.location_repo import get_or_create_location
-from fastesc.repositories.person_repo import get_or_create_person
+from fastesc.api.dependencies import get_repository
+from fastesc.api.models.data_import import DataImportContest
+from fastesc.api.models.functions import add_id
+from fastesc.api.models.models import CountryBase, CityBase, LocationBase, BroadcasterBase, ContestBase, PersonBase
+from fastesc.database.models.models import Broadcaster as DB_Broadcaster, City as DB_City, Contest as DB_Contest, \
+    Country as DB_Country, Location as DB_Location, Person as DB_Person, \
+    Affiliation as DB_Affiliation
+from fastesc.database.repositories.base_repo import DatabaseRepository
+
+AffiliationRepository = Annotated[
+    DatabaseRepository[DB_Affiliation],
+    Depends(get_repository(DB_Affiliation))
+]
+BroadcasterRepository = Annotated[
+    DatabaseRepository[DB_Broadcaster],
+    Depends(get_repository(DB_Broadcaster))
+]
+CityRepository = Annotated[
+    DatabaseRepository[DB_City],
+    Depends(get_repository(DB_City))
+]
+ContestRepository = Annotated[
+    DatabaseRepository[DB_Contest],
+    Depends(get_repository(DB_Contest))
+]
+CountryRepository = Annotated[
+    DatabaseRepository[DB_Country],
+    Depends(get_repository(DB_Country))
+]
+LocationRepository = Annotated[
+    DatabaseRepository[DB_Location],
+    Depends(get_repository(DB_Location))
+]
+PersonRepository = Annotated[
+    DatabaseRepository[DB_Person],
+    Depends(get_repository(DB_Person))
+]
+
+BroadcasterWithId = add_id(BroadcasterBase)
+CityWithId = add_id(CityBase)
+ContestWithId = add_id(ContestBase)
+CountryWithId = add_id(CountryBase)
+LocationWithId = add_id(LocationBase)
+PersonWithId = add_id(PersonBase)
 
 router = APIRouter(prefix="/data_import", tags=["import"])
 
 
 @router.post("/contests/", response_model=list[DataImportContest])
-def import_contest_data(
-        *, session: Session = Depends(get_session), data: list[DataImportContest]
+async def import_contest_data(
+        affiliation_repository: AffiliationRepository,
+        broadcaster_repository: BroadcasterRepository,
+        city_repository: CityRepository,
+        contest_repository: ContestRepository,
+        country_repository: CountryRepository,
+        location_repository: LocationRepository,
+        person_repository: PersonRepository,
+        data: list[DataImportContest]
 ):
-    for contest in data:
-        DataImportContest.model_validate(contest)
+    for contest_data in data:
+        DataImportContest.model_validate(contest_data)
 
-        db_country = get_country_by_county_name(session, contest.country)
-        if db_country is None:
+        db_country = await country_repository.filter(DB_Country.name == contest_data.country)
+        if len(db_country) != 1:
             raise HTTPException(
                 status_code=422,
-                detail=f"Country '{contest.country}' not found in database.",
+                detail=f"Country '{contest_data.country}' not found in database.",
             )
+        country = CountryWithId.model_validate(db_country[0])
 
-        db_city = get_or_create_city(
-            session, City(country_id=db_country.id, name=contest.city)
+        db_city: DB_City = await (
+            city_repository.get_or_create({"name": contest_data.city, "country_id": country.id}))
+        city = CityWithId.model_validate(db_city)
+
+        db_location: DB_Location = await location_repository.get_or_create(
+            {"name": contest_data.location, "city_id": city.id})
+        location = LocationWithId.model_validate(db_location)
+
+        db_broadcaster: DB_Broadcaster = await broadcaster_repository.get_or_create(
+            {"name": contest_data.broadcaster, "country_id": country.id}
         )
+        broadcaster = BroadcasterWithId.model_validate(db_broadcaster)
 
-        db_location = get_or_create_location(
-            session, Location(name=contest.location, city_id=db_city.id)
+        db_contest = await contest_repository.get_or_create(
+            {
+                "date": datetime.strptime(contest_data.date, "%d.%m.%Y").date(),
+                "final": contest_data.final,
+                "location_id": location.id,
+                "broadcaster_id": broadcaster.id
+            }
         )
+        contest = ContestWithId.model_validate(db_contest)
 
-        db_broadcaster = get_or_create_broadcaster(
-            session, Broadcaster(name=contest.broadcaster, country_id=db_country.id)
-        )
+        if contest_data.hosts:
+            for host_name in contest_data.hosts:
+                db_person = await person_repository.get_or_create({"name": host_name})
+                person = PersonWithId.model_validate(db_person)
 
-        db_contest = get_or_create_contest(
-            session,
-            Contest(
-                date=datetime.strptime(contest.date, "%d.%m.%Y").date(),
-                final=contest.final,
-                location_id=db_location.id,
-                broadcaster_id=db_broadcaster.id,
-            ),
-        )
-
-        if contest.hosts:
-            for host_name in contest.hosts:
-                db_person = get_or_create_person(session, Person(name=host_name))
-
-                get_or_create_host(
-                    session, Host(person_id=db_person.id, contest_id=db_contest.id)
-                )
+                await affiliation_repository.get_or_create({"role": "HOST",
+                                                            "person_id": person.id,
+                                                            "contest_id": contest.id})
 
     return data

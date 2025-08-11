@@ -1,6 +1,7 @@
+from datetime import date
 from typing import List
 
-from sqlalchemy import String, ForeignKey, CheckConstraint, Table, Column
+from sqlalchemy import String, ForeignKey, CheckConstraint, Date
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from fastesc.database.models.base import Base
@@ -65,7 +66,7 @@ class City(Base):
 class Contest(Base):
     __tablename__ = 'contest'
 
-    date: Mapped[str] = mapped_column("date", nullable=False)
+    date: Mapped[date] = mapped_column("date", type_=Date, nullable=False)
     final: Mapped[int] = mapped_column("final", nullable=False)
 
     location_id: Mapped[int] = mapped_column(ForeignKey("location.id"))

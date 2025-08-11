@@ -116,11 +116,11 @@ class Location(Base):
 class Participation(Base):
     __tablename__ = 'participation'
 
-    place: Mapped[int] = mapped_column("place")
+    place: Mapped[int] = mapped_column("place", nullable=True)
     running: Mapped[int] = mapped_column("running")
-    points: Mapped[int] = mapped_column("points")
-    jury_points: Mapped[int] = mapped_column("jury_points")
-    public_points: Mapped[int] = mapped_column("public_points")
+    points: Mapped[int] = mapped_column("points", nullable=True)
+    jury_points: Mapped[int] = mapped_column("jury_points", nullable=True)
+    public_points: Mapped[int] = mapped_column("public_points", nullable=True)
 
     song_id: Mapped[int] = mapped_column(ForeignKey("song.id"))
     song: Mapped["Song"] = relationship(back_populates="participations")

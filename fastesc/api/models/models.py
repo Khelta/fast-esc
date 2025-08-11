@@ -4,6 +4,12 @@ from typing import List
 from pydantic import BaseModel, ConfigDict
 
 
+class AffiliationBase(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    role: str
+
+
 class ArtistBase(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
@@ -48,10 +54,26 @@ class LocationBase(BaseModel):
     name: str
 
 
+class ParticipationBase(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    place: int | None
+    running: int
+    points: int | None
+    jury_points: int | None
+    public_points: int | None
+
+
 class PersonBase(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
     name: str
+
+
+class SongBase(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    title: str
 
 
 class CountryPublic(CountryBase):

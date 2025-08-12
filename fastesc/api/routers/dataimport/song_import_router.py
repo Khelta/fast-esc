@@ -71,7 +71,7 @@ async def import_song_data(
         participations = entry.participations
 
         # TODO Remove sqlalchemy dependency
-        db_contest: DB_Contest = await contest_repository.filter(
+        db_contest = await contest_repository.filter(
             DB_Contest.final == final, extract('year', DB_Contest.date) == year
         )
         if len(db_contest) != 1:
@@ -83,13 +83,13 @@ async def import_song_data(
 
         for participation_data in participations:
 
-            db_country = await country_repository.filter(DB_Country.alpha2 == participation_data.country[:2])
-            if len(db_country) != 1:
+            db_country = await country_repository.get_by_dict({"alpha2": participation_data.country[:2]})
+            if not db_country:
                 raise HTTPException(
                     status_code=422,
                     detail=f"Country '{participation_data.country}' not found in database.",
                 )
-            country = CountryWithId.model_validate(db_country[0])
+            country = CountryWithId.model_validate(db_country)
 
             db_artist = await artist_repository.get_or_create({"name": participation_data.artist})
             artist = ArtistWithId.model_validate(db_artist)

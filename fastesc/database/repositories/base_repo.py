@@ -31,6 +31,11 @@ class DatabaseRepository(Generic[Model]):
         else:
             return await self.create(data)
 
+    async def get_by_dict(self, data: dict) -> Model | None:
+        query = select(self.model).filter_by(**data)
+        instance = await self.session.scalar(query)
+        return instance
+
     async def filter(
             self,
             offset: int = 0,

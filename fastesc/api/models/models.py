@@ -76,14 +76,23 @@ class SongBase(BaseModel):
     title: str
 
 
+class LocationWithCity(LocationBase):
+    city: CityBase
+
+
+class ContestPublic(ContestBase):
+    location: LocationWithCity
+
+
+class ParticipationPublic(ParticipationBase):
+    contest: ContestPublic
+
+
+class SongPublic(SongBase):
+    artist: ArtistBase
+    participations: List[ParticipationPublic]
+
+
 class CountryPublic(CountryBase):
     cities: List[CityBase]
-
-
-class CityPublic(BaseModel):
-    country: CountryBase
-    locations: List[LocationBase]
-
-
-class LocationPublic(LocationBase):
-    city: CityBase
+    songs: List[SongPublic]

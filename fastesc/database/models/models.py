@@ -25,11 +25,11 @@ class Affiliation(Base):
     role: Mapped[str] = mapped_column("role", nullable=False)
 
     person_id: Mapped[int] = mapped_column(ForeignKey("person.id"), nullable=False)
-    person: Mapped["Person"] = relationship(back_populates="affiliations")
+    person: Mapped["Person"] = relationship(back_populates="affiliations", lazy="selectin")
     artist_id: Mapped[int] = mapped_column(ForeignKey("artist.id"), nullable=True)
-    artist: Mapped["Artist"] = relationship(back_populates="affiliations")
+    artist: Mapped["Artist"] = relationship(back_populates="affiliations", lazy="selectin")
     contest_id: Mapped[int] = mapped_column(ForeignKey("contest.id"), nullable=False)
-    contest: Mapped["Contest"] = relationship(back_populates="affiliations")
+    contest: Mapped["Contest"] = relationship(back_populates="affiliations", lazy="selectin")
 
     class Config:
         orm_mode = True
@@ -41,7 +41,7 @@ class Broadcaster(Base):
     name: Mapped[str] = mapped_column("name", nullable=False)
 
     country_id: Mapped[int] = mapped_column(ForeignKey("country.id"))
-    country: Mapped["Country"] = relationship(back_populates="broadcasters")
+    country: Mapped["Country"] = relationship(back_populates="broadcasters", lazy="selectin")
 
     contests: Mapped[List["Contest"]] = relationship(back_populates="broadcaster", lazy="selectin")
 
@@ -55,7 +55,7 @@ class City(Base):
     name: Mapped[str] = mapped_column("name", nullable=False)
 
     country_id: Mapped[int] = mapped_column(ForeignKey("country.id"))
-    country: Mapped["Country"] = relationship(back_populates="cities")
+    country: Mapped["Country"] = relationship(back_populates="cities", lazy="selectin")
 
     locations: Mapped[List["Location"]] = relationship(back_populates="city", lazy="selectin")
 
@@ -70,9 +70,9 @@ class Contest(Base):
     final: Mapped[int] = mapped_column("final", nullable=False)
 
     location_id: Mapped[int] = mapped_column(ForeignKey("location.id"))
-    location: Mapped["Location"] = relationship(back_populates="contests")
+    location: Mapped["Location"] = relationship(back_populates="contests", lazy="selectin")
     broadcaster_id: Mapped[int] = mapped_column(ForeignKey("broadcaster.id"))
-    broadcaster: Mapped["Broadcaster"] = relationship(back_populates="contests")
+    broadcaster: Mapped["Broadcaster"] = relationship(back_populates="contests", lazy="selectin")
 
     participations: Mapped[List["Participation"]] = relationship(back_populates="contest", lazy="selectin")
     affiliations: Mapped[List["Affiliation"]] = relationship(back_populates="contest", lazy="selectin")
@@ -105,7 +105,7 @@ class Location(Base):
     name: Mapped[str] = mapped_column("name", nullable=False)
 
     city_id: Mapped[int] = mapped_column(ForeignKey("city.id"))
-    city: Mapped["City"] = relationship(back_populates="locations")
+    city: Mapped["City"] = relationship(back_populates="locations", lazy="selectin")
 
     contests: Mapped[List["Contest"]] = relationship(back_populates="location", lazy="selectin")
 
@@ -123,9 +123,9 @@ class Participation(Base):
     public_points: Mapped[int] = mapped_column("public_points", nullable=True)
 
     song_id: Mapped[int] = mapped_column(ForeignKey("song.id"))
-    song: Mapped["Song"] = relationship(back_populates="participations")
+    song: Mapped["Song"] = relationship(back_populates="participations", lazy="selectin")
     contest_id: Mapped[int] = mapped_column(ForeignKey("contest.id"))
-    contest: Mapped["Contest"] = relationship(back_populates="participations")
+    contest: Mapped["Contest"] = relationship(back_populates="participations", lazy="selectin")
 
     class Config:
         orm_mode = True
@@ -148,9 +148,9 @@ class Song(Base):
     title: Mapped[str] = mapped_column("title", nullable=False)
 
     country_id: Mapped[int] = mapped_column(ForeignKey("country.id"))
-    country: Mapped["Country"] = relationship(back_populates="songs")
+    country: Mapped["Country"] = relationship(back_populates="songs", lazy="selectin")
     artist_id: Mapped[int] = mapped_column(ForeignKey("artist.id"))
-    artist: Mapped["Artist"] = relationship(back_populates="songs")
+    artist: Mapped["Artist"] = relationship(back_populates="songs", lazy="selectin")
 
     participations: Mapped[List["Participation"]] = relationship(back_populates="song", lazy="selectin")
 

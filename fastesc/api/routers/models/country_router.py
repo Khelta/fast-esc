@@ -16,8 +16,8 @@ CountryRepository = Annotated[
 
 
 @router.get("", response_model=list[CountryPublic])
-async def get_countries(repository: CountryRepository):
-    countries = await repository.filter()
+async def get_countries(repository: CountryRepository, offset: int = 0, limit: int = None):
+    countries = await repository.filter(offset=offset, limit=limit)
     return [CountryPublic.model_validate(country) for country in countries]
 
 

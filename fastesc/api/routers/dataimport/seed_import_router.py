@@ -133,20 +133,27 @@ async def seed_init_database(affiliation_repository: AffiliationRepository,
                              location_repository: LocationRepository,
                              participation_repository: ParticipationRepository,
                              person_repository: PersonRepository,
-                             song_repository: SongRepository):
-    await seed_countries(country_repository=country_repository)
-    await seed_contest(affiliation_repository=affiliation_repository,
-                       broadcaster_repository=broadcaster_repository,
-                       city_repository=city_repository,
-                       contest_repository=contest_repository,
-                       country_repository=country_repository,
-                       location_repository=location_repository,
-                       person_repository=person_repository)
-    await seed_songs(affiliation_repository=affiliation_repository,
-                     artist_repository=artist_repository,
-                     contest_repository=contest_repository,
-                     country_repository=country_repository,
-                     participation_repository=participation_repository,
-                     person_repository=person_repository,
-                     song_repository=song_repository)
+                             song_repository: SongRepository,
+                             countries: bool = True,
+                             contests: bool = True,
+                             songs: bool = True,
+                             ):
+    if countries:
+        await seed_countries(country_repository=country_repository)
+    if contests:
+        await seed_contest(affiliation_repository=affiliation_repository,
+                           broadcaster_repository=broadcaster_repository,
+                           city_repository=city_repository,
+                           contest_repository=contest_repository,
+                           country_repository=country_repository,
+                           location_repository=location_repository,
+                           person_repository=person_repository)
+    if songs:
+        await seed_songs(affiliation_repository=affiliation_repository,
+                         artist_repository=artist_repository,
+                         contest_repository=contest_repository,
+                         country_repository=country_repository,
+                         participation_repository=participation_repository,
+                         person_repository=person_repository,
+                         song_repository=song_repository)
     return "Seeding complete"

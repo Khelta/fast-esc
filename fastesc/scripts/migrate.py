@@ -8,11 +8,14 @@ from fastesc.db import DATABASE_URL
 
 logger = logging.getLogger()
 
+# To ensure all models are registered, import them here
+from fastesc.database.models import models
+
+models
+
 
 async def migrate_tables() -> None:
     logger.info("Starting to migrate")
-
-    # To ensure all models are registered, import them here
 
     engine = create_async_engine(DATABASE_URL)
     async with engine.begin() as conn:

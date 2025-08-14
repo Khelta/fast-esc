@@ -38,12 +38,16 @@ class DatabaseRepository(Generic[Model]):
 
     async def filter(
             self,
+            *expressions: BinaryExpression,
             offset: int = 0,
             limit: int = None,
-            *expressions: BinaryExpression,
+
     ) -> list[Model]:
         query = select(self.model)
-        query = query.offset(offset).limit(limit)
+        if limit:
+            query = query.limit(limit)
+        if offset:
+            query = query.offset(offset)
         if expressions:
             query = query.where(*expressions)
         return list(await self.session.scalars(query))

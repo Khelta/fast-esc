@@ -84,7 +84,6 @@ async def import_song_data(
         for participation_data in participations:
 
             db_country = await country_repository.get_by_dict({"alpha2": participation_data.country[:2]}, lazy=True)
-            db_country = CountryBase.model_validate(db_country)
             if not db_country:
                 raise HTTPException(
                     status_code=422,
@@ -100,7 +99,7 @@ async def import_song_data(
             song = SongWithId.model_validate(db_song)
 
             db_participation = await participation_repository.get_or_create(
-            {"song_id": song.id,
+                {"song_id": song.id,
                  "contest_id": contest.id,
                  "place": participation_data.place,
                  "running": participation_data.running,

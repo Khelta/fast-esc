@@ -35,7 +35,7 @@ DATABASE_URL = "postgresql+asyncpg://{}:{}@{}:{}/{}".format(DATABASE_USERNAME,
 
 
 async def get_db_session() -> AsyncGenerator[AsyncSession, None]:
-    engine = create_async_engine(DATABASE_URL)
+    engine = create_async_engine(DATABASE_URL, echo=True)
     factory = async_sessionmaker(engine)
     async with factory() as session:
         try:

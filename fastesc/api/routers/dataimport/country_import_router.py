@@ -20,7 +20,7 @@ async def import_country_data(repository: CountryRepository, data: list[CountryB
     result = []
 
     for c in data:
-        country = await repository.get_or_create({"name": c.name, "alpha2": c.alpha2})
+        country = await repository.get_or_create({"name": c.name, "alpha2": c.alpha2}, lazy=True)
         country = CountryBase.model_validate(country)
         result.append(country)
 

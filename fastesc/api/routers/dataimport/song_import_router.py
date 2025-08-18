@@ -72,7 +72,7 @@ async def import_song_data(
 
         # TODO Remove sqlalchemy dependency
         db_contest = await contest_repository.filter(
-            DB_Contest.final == final, extract('year', DB_Contest.date) == year
+            DB_Contest.final == final, extract('year', DB_Contest.date) == year, lazy=True
         )
         if len(db_contest) != 1:
             raise HTTPException(
@@ -83,7 +83,8 @@ async def import_song_data(
 
         for participation_data in participations:
 
-            db_country = await country_repository.get_by_dict({"alpha2": participation_data.country[:2]})
+            db_country = await country_repository.get_by_dict({"alpha2": participation_data.country[:2]}, lazy=True)
+            db_country = CountryBase.model_validate(db_country)
             if not db_country:
                 raise HTTPException(
                     status_code=422,
@@ -91,31 +92,35 @@ async def import_song_data(
                 )
             country = CountryWithId.model_validate(db_country)
 
-            db_artist = await artist_repository.get_or_create({"name": participation_data.artist})
+            db_artist = await artist_repository.get_or_create({"name": participation_data.artist}, lazy=True)
             artist = ArtistWithId.model_validate(db_artist)
 
             db_song = await song_repository.get_or_create(
-                {"title": participation_data.title, "country_id": country.id, "artist_id": artist.id})
+                {"title": participation_data.title, "country_id": country.id, "artist_id": artist.id}, lazy=True)
             song = SongWithId.model_validate(db_song)
 
             db_participation = await participation_repository.get_or_create(
-                {"song_id": song.id, "contest_id": contest.id, "place": participation_data.place,
+            {"song_id": song.id,
+                 "contest_id": contest.id,
+                 "place": participation_data.place,
                  "running": participation_data.running,
                  "points": participation_data.points,
                  "jury_points": participation_data.jury_points,
-                 "public_points": participation_data.public_points, })
+                 "public_points": participation_data.public_points, },
+                lazy=True)
             participation = ParticipationWithId.model_validate(db_participation)
 
             if participation_data.people:
                 for people_category in participation_data.people:
                     for person_name in participation_data.people[people_category]:
-                        db_person = await person_repository.get_or_create({"name": person_name})
+                        db_person = await person_repository.get_or_create({"name": person_name}, lazy=True)
                         person = PersonWithId.model_validate(db_person)
 
                         db_affiliation = await affiliation_repository.get_or_create({"person_id": person.id,
                                                                                      "artist_id": artist.id,
                                                                                      "contest_id": contest.id,
-                                                                                     "role": people_category})
+                                                                                     "role": people_category},
+                                                                                    lazy=True)
                         AffiliationWithId.model_validate(db_affiliation)
 
     return [d.model_dump() for d in data]

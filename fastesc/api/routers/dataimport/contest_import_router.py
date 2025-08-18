@@ -65,24 +65,24 @@ async def import_contest_data(
     for contest_data in data:
         DataImportContest.model_validate(contest_data)
 
-        db_country = await country_repository.filter(DB_Country.name == contest_data.country)
-        if len(db_country) != 1:
+        db_country = await country_repository.get_by_dict({"name": contest_data.country}, lazy=True)
+        if db_country is None:
             raise HTTPException(
                 status_code=422,
                 detail=f"Country '{contest_data.country}' not found in database.",
             )
-        country = CountryWithId.model_validate(db_country[0])
+        country = CountryWithId.model_validate(db_country)
 
         db_city: DB_City = await (
-            city_repository.get_or_create({"name": contest_data.city, "country_id": country.id}))
+            city_repository.get_or_create({"name": contest_data.city, "country_id": country.id}, lazy=True))
         city = CityWithId.model_validate(db_city)
 
         db_location: DB_Location = await location_repository.get_or_create(
-            {"name": contest_data.location, "city_id": city.id})
+            {"name": contest_data.location, "city_id": city.id}, lazy=True)
         location = LocationWithId.model_validate(db_location)
 
         db_broadcaster: DB_Broadcaster = await broadcaster_repository.get_or_create(
-            {"name": contest_data.broadcaster, "country_id": country.id}
+            {"name": contest_data.broadcaster, "country_id": country.id}, lazy=True
         )
         broadcaster = BroadcasterWithId.model_validate(db_broadcaster)
 
@@ -92,17 +92,17 @@ async def import_contest_data(
                 "final": contest_data.final,
                 "location_id": location.id,
                 "broadcaster_id": broadcaster.id
-            }
+            }, lazy=True
         )
         contest = ContestWithId.model_validate(db_contest)
 
         if contest_data.hosts:
             for host_name in contest_data.hosts:
-                db_person = await person_repository.get_or_create({"name": host_name})
+                db_person = await person_repository.get_or_create({"name": host_name}, lazy=True)
                 person = PersonWithId.model_validate(db_person)
 
                 await affiliation_repository.get_or_create({"role": "HOST",
                                                             "person_id": person.id,
-                                                            "contest_id": contest.id})
+                                                            "contest_id": contest.id}, lazy=True)
 
     return data

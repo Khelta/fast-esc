@@ -33,6 +33,12 @@ DATABASE_URL = "postgresql+asyncpg://{}:{}@{}:{}/{}".format(DATABASE_USERNAME,
                                                             DATABASE_PORT,
                                                             DATABASE_NAME)
 
+TEST_DATABASE_URL = "postgresql+asyncpg://{}:{}@{}:{}/{}".format(DATABASE_USERNAME,
+                                                                 DATABASE_PASSWORD,
+                                                                 DATABASE_HOST,
+                                                                 DATABASE_PORT,
+                                                                 "test")
+
 
 async def get_db_session() -> AsyncGenerator[AsyncSession, None]:
     engine = create_async_engine(DATABASE_URL, echo=True)

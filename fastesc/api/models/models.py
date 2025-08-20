@@ -1,7 +1,7 @@
 from datetime import date as dateClass
 from typing import List
 
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, field_validator
 
 
 class AffiliationBase(BaseModel):
@@ -77,11 +77,31 @@ class SongBase(BaseModel):
 
 
 class LocationWithCity(LocationBase):
-    city: CityBase
+    city: str
+
+    @field_validator("city", mode="before")
+    @classmethod
+    def get_city_name(cls, value: CityBase) -> str:
+        return value.name
+
+
+class SongContest(SongBase):
+    artist: str
+    country: str
+
+    @field_validator("artist", "country", mode="before")
+    @classmethod
+    def get_name(cls, value) -> str:
+        return value.name
+
+
+class ParticipationContest(ParticipationBase):
+    song: SongContest
 
 
 class ContestPublic(ContestBase):
     location: LocationWithCity
+    participations: List[ParticipationContest]
 
 
 class ParticipationPublic(ParticipationBase):

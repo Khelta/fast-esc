@@ -99,6 +99,20 @@ class Country(Base):
         orm_mode = True
 
 
+class Language(Base):
+    __tablename__ = 'language'
+
+    name: Mapped[str] = mapped_column("name", nullable=False, index=True)
+
+    songs: Mapped[List["LanguageSongAssociation"]] = relationship()
+
+
+class LanguageSongAssociation(Base):
+    __tablename__ = 'language_song_association'
+    language_id: Mapped[int] = mapped_column(ForeignKey("language.id"))
+    song_id: Mapped[int] = mapped_column(ForeignKey("song.id"))
+
+
 class Location(Base):
     __tablename__ = 'location'
 
@@ -146,12 +160,14 @@ class Song(Base):
     __tablename__ = 'song'
 
     title: Mapped[str] = mapped_column("title", nullable=False, index=True)
+    text: Mapped[str] = mapped_column("text")
 
     country_id: Mapped[int] = mapped_column(ForeignKey("country.id"), index=True)
     country: Mapped["Country"] = relationship(back_populates="songs", lazy="selectin")
     artist_id: Mapped[int] = mapped_column(ForeignKey("artist.id"), index=True)
     artist: Mapped["Artist"] = relationship(back_populates="songs", lazy="selectin")
 
+    languages: Mapped[List["LanguageSongAssociation"]] = relationship()
     participations: Mapped[List["Participation"]] = relationship(back_populates="song", lazy="selectin")
 
     class Config:

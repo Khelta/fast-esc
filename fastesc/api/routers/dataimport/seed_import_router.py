@@ -13,7 +13,8 @@ from fastesc.api.routers.dataimport.country_import_router import import_country_
 from fastesc.api.routers.dataimport.song_import_router import import_song_data
 from fastesc.database.models.models import Affiliation as DB_Affiliation, Artist as DB_Artist, \
     Broadcaster as DB_Broadcaster, City as DB_City, Contest as DB_Contest, Country as DB_Country, \
-    Location as DB_Location, Participation as DB_Participation, Person as DB_Person, Song as DB_Song
+    Language as DB_Language, Location as DB_Location, Participation as DB_Participation, Person as DB_Person, \
+    Song as DB_Song, LanguageSongAssociation as DB_LanguageSongAssociation
 from fastesc.database.repositories.base_repo import DatabaseRepository
 
 AffiliationRepository = Annotated[
@@ -39,6 +40,14 @@ ContestRepository = Annotated[
 CountryRepository = Annotated[
     DatabaseRepository[DB_Country],
     Depends(get_repository(DB_Country))
+]
+LanguageRepository = Annotated[
+    DatabaseRepository[DB_Language],
+    Depends(get_repository(DB_Language))
+]
+LanguageSongAssociationRepository = Annotated[
+    DatabaseRepository[DB_LanguageSongAssociation],
+    Depends(get_repository(DB_LanguageSongAssociation))
 ]
 LocationRepository = Annotated[
     DatabaseRepository[DB_Location],
@@ -101,6 +110,8 @@ async def seed_songs(affiliation_repository: AffiliationRepository,
                      artist_repository: ArtistRepository,
                      contest_repository: ContestRepository,
                      country_repository: CountryRepository,
+                     language_repository: LanguageRepository,
+                     language_song_association_repository: LanguageSongAssociationRepository,
                      participation_repository: ParticipationRepository,
                      person_repository: PersonRepository,
                      song_repository: SongRepository):
@@ -114,6 +125,8 @@ async def seed_songs(affiliation_repository: AffiliationRepository,
                                artist_repository=artist_repository,
                                contest_repository=contest_repository,
                                country_repository=country_repository,
+                               language_repository=language_repository,
+                               language_song_association_repository=language_song_association_repository,
                                participation_repository=participation_repository,
                                person_repository=person_repository,
                                song_repository=song_repository,
@@ -130,6 +143,8 @@ async def seed_init_database(affiliation_repository: AffiliationRepository,
                              city_repository: CityRepository,
                              contest_repository: ContestRepository,
                              country_repository: CountryRepository,
+                             language_repository: LanguageRepository,
+                             language_song_association_repository: LanguageSongAssociationRepository,
                              location_repository: LocationRepository,
                              participation_repository: ParticipationRepository,
                              person_repository: PersonRepository,
@@ -153,6 +168,8 @@ async def seed_init_database(affiliation_repository: AffiliationRepository,
                          artist_repository=artist_repository,
                          contest_repository=contest_repository,
                          country_repository=country_repository,
+                         language_repository=language_repository,
+                         language_song_association_repository=language_song_association_repository,
                          participation_repository=participation_repository,
                          person_repository=person_repository,
                          song_repository=song_repository)

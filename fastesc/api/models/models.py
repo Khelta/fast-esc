@@ -48,6 +48,12 @@ class CountryBase(BaseModel):
     alpha2: str
 
 
+class LanguageBase(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    name: str
+
+
 class LocationBase(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
@@ -105,7 +111,7 @@ class ContestPublic(ContestBase):
 
 
 class ParticipationPublic(ParticipationBase):
-    contest: ContestPublic
+    contest: ContestBase
 
 
 class SongPublic(SongBase):

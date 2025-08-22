@@ -7,10 +7,10 @@ from fastesc.api.dependencies import get_repository
 from fastesc.api.models.data_import import DataImportSong
 from fastesc.api.models.functions import add_id
 from fastesc.api.models.models import CountryBase, ArtistBase, SongBase, ContestBase, ParticipationBase, PersonBase, \
-    AffiliationBase
+    AffiliationBase, LanguageBase
 from fastesc.database.models.models import Affiliation as DB_Affiliation, Artist as DB_Artist, Contest as DB_Contest, \
-    Country as DB_Country, \
-    Person as DB_Person, Participation as DB_Participation, Song as DB_Song
+    Country as DB_Country, Language as DB_Language, Person as DB_Person, Participation as DB_Participation, \
+    Song as DB_Song, LanguageSongAssociation as DB_LanguageSongAssociation
 from fastesc.database.repositories.base_repo import DatabaseRepository
 
 router = APIRouter(prefix="/data_import", tags=["import"])
@@ -32,6 +32,14 @@ CountryRepository = Annotated[
     DatabaseRepository[DB_Country],
     Depends(get_repository(DB_Country))
 ]
+LanguageRepository = Annotated[
+    DatabaseRepository[DB_Language],
+    Depends(get_repository(DB_Language))
+]
+LanguageSongAssociationRepository = Annotated[
+    DatabaseRepository[DB_LanguageSongAssociation],
+    Depends(get_repository(DB_LanguageSongAssociation))
+]
 ParticipationRepository = Annotated[
     DatabaseRepository[DB_Participation],
     Depends(get_repository(DB_Participation))
@@ -49,6 +57,7 @@ AffiliationWithId = add_id(AffiliationBase)
 ArtistWithId = add_id(ArtistBase)
 ContestWithId = add_id(ContestBase)
 CountryWithId = add_id(CountryBase)
+LanguageWithId = add_id(LanguageBase)
 ParticipationWithId = add_id(ParticipationBase)
 PersonWithId = add_id(PersonBase)
 SongWithId = add_id(SongBase)
@@ -60,6 +69,8 @@ async def import_song_data(
         artist_repository: ArtistRepository,
         contest_repository: ContestRepository,
         country_repository: CountryRepository,
+        language_repository: LanguageRepository,
+        language_song_association_repository: LanguageSongAssociationRepository,
         participation_repository: ParticipationRepository,
         person_repository: PersonRepository,
         song_repository: SongRepository,
@@ -94,9 +105,24 @@ async def import_song_data(
             db_artist = await artist_repository.get_or_create({"name": participation_data.artist}, lazy=True)
             artist = ArtistWithId.model_validate(db_artist)
 
-            db_song = await song_repository.get_or_create(
-                {"title": participation_data.title, "country_id": country.id, "artist_id": artist.id}, lazy=True)
+            languages = []
+            for language in participation_data.languages:
+                db_language = await language_repository.get_or_create({"name": language}, lazy=True)
+                language = LanguageWithId.model_validate(db_language)
+                languages.append(language)
+
+            db_song = await song_repository.get_or_create({
+                "title": participation_data.title,
+                "text": participation_data.text,
+                "artist_id": artist.id,
+                "country_id": country.id,
+            },
+                lazy=True)
             song = SongWithId.model_validate(db_song)
+
+            for language in languages:
+                await language_song_association_repository.get_or_create(
+                    {"language_id": language.id, "song_id": song.id}, lazy=True)
 
             db_participation = await participation_repository.get_or_create(
                 {"song_id": song.id,

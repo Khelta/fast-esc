@@ -32,7 +32,7 @@ class DatabaseRepository(Generic[Model]):
     async def get(self, id: int) -> Model | None:
         return await self.session.get(self.model, id)
 
-    async def get_or_create(self, data: dict, lazy: bool=False) -> Model:
+    async def get_or_create(self, data: dict, lazy: bool = False) -> Model:
         query = select(self.model).filter_by(**data)
 
         if lazy:
@@ -44,7 +44,7 @@ class DatabaseRepository(Generic[Model]):
         else:
             return await self.create(data)
 
-    async def get_by_dict(self, data: dict, lazy: bool=False) -> Model | None:
+    async def get_by_dict(self, data: dict, lazy: bool = False) -> Model | None:
         query = select(self.model).filter_by(**data)
 
         if lazy:
@@ -58,16 +58,38 @@ class DatabaseRepository(Generic[Model]):
             *expressions: BinaryExpression,
             offset: int = 0,
             limit: int = None,
-            lazy: bool=False
+            lazy: bool = False
 
     ) -> list[Model]:
         query = select(self.model)
         if limit:
             query = query.limit(limit)
-        if offset:
-            query = query.offset(offset)
+            if offset:
+                query = query.offset(limit * offset)
         if expressions:
             query = query.where(*expressions)
         if lazy:
             query = self.add_lazy(query)
+        return list(await self.session.scalars(query))
+
+    async def get_text_in_column(self,
+                                 column_name: str,
+                                 text: str,
+                                 case_sensitive: bool = False,
+                                 whole_word: bool = False,
+                                 offset: int = 0,
+                                 limit: int | None = 10,
+                                 ) -> list[Model]:
+        query = select(self.model)
+
+        pattern = rf'\y{text}\y' if whole_word else text
+        regex_op = '~' if case_sensitive else '~*'
+
+        query = query.where(getattr(self.model, column_name).op(regex_op)(pattern))
+
+        if limit:
+            query = query.limit(limit)
+            if offset:
+                query = query.offset(limit * offset)
+
         return list(await self.session.scalars(query))

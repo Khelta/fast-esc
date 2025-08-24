@@ -122,3 +122,10 @@ class SongPublic(SongBase):
 class CountryPublic(CountryBase):
     cities: List[CityBase]
     songs: List[SongPublic]
+
+
+class SongTextPublic(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    size: int
+    songs: List[SongPublic]

@@ -3,7 +3,7 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException
 
-from fastesc.api.dependencies import get_repository
+from fastesc.api.dependencies import get_repository, verify_api_key
 from fastesc.api.models.data_import import DataImportContest
 from fastesc.api.models.functions import add_id
 from fastesc.api.models.models import CountryBase, CityBase, LocationBase, BroadcasterBase, ContestBase, PersonBase
@@ -60,7 +60,8 @@ async def import_contest_data(
         country_repository: CountryRepository,
         location_repository: LocationRepository,
         person_repository: PersonRepository,
-        data: list[DataImportContest]
+        data: list[DataImportContest],
+        token: str = Depends(verify_api_key),
 ):
     for contest_data in data:
         DataImportContest.model_validate(contest_data)

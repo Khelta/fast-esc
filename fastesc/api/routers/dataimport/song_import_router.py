@@ -3,7 +3,7 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import extract
 
-from fastesc.api.dependencies import get_repository
+from fastesc.api.dependencies import get_repository, verify_api_key
 from fastesc.api.models.data_import import DataImportSong
 from fastesc.api.models.functions import add_id
 from fastesc.api.models.models import CountryBase, ArtistBase, SongBase, ContestBase, ParticipationBase, PersonBase, \
@@ -74,7 +74,9 @@ async def import_song_data(
         participation_repository: ParticipationRepository,
         person_repository: PersonRepository,
         song_repository: SongRepository,
-        data: list[DataImportSong]
+
+        data: list[DataImportSong],
+        token: str = Depends(verify_api_key)
 ):
     for entry in data:
         year = entry.year

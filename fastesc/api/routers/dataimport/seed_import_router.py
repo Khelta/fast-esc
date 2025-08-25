@@ -4,7 +4,7 @@ from typing import Annotated
 import requests
 from fastapi import Depends, APIRouter
 
-from fastesc.api.dependencies import get_repository
+from fastesc.api.dependencies import get_repository, verify_api_key
 from fastesc.api.models.data_import import DataImportContest
 from fastesc.api.models.data_import import DataImportSong
 from fastesc.api.models.models import CountryBase
@@ -149,6 +149,8 @@ async def seed_init_database(affiliation_repository: AffiliationRepository,
                              participation_repository: ParticipationRepository,
                              person_repository: PersonRepository,
                              song_repository: SongRepository,
+
+                             token: str = Depends(verify_api_key),
                              countries: bool = True,
                              contests: bool = True,
                              songs: bool = True,

@@ -2,7 +2,7 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends
 
-from fastesc.api.dependencies import get_repository
+from fastesc.api.dependencies import get_repository, verify_api_key
 from fastesc.api.models.models import CountryBase
 from fastesc.database.models.models import Country
 from fastesc.database.repositories.base_repo import DatabaseRepository
@@ -16,7 +16,8 @@ CountryRepository = Annotated[
 
 
 @router.post("/countries/", response_model=list[CountryBase])
-async def import_country_data(repository: CountryRepository, data: list[CountryBase]):
+async def import_country_data(repository: CountryRepository, data: list[CountryBase],
+                              token: str = Depends(verify_api_key)):
     result = []
 
     for c in data:

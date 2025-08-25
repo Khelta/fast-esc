@@ -10,9 +10,10 @@ from sqlalchemy.ext.asyncio import (
     create_async_engine,
 )
 
+from fastesc.configuration import TEST_DATABASE_URL, API_KEY
 from fastesc.database.models import models
 from fastesc.database.models.base import Base
-from fastesc.db import TEST_DATABASE_URL, get_db_session
+from fastesc.db import get_db_session
 from fastesc.main import app
 from tests.data import country_import_data, contest_import_data, song_import_data
 
@@ -49,10 +50,13 @@ async def client(test_app: FastAPI) -> AsyncGenerator[AsyncClient, None]:
 @pytest_asyncio.fixture()
 async def fill_database(client, country_import_data, contest_import_data, song_import_data):
     await client.post("/data_import/countries/",
-                      json=country_import_data)
+                      json=country_import_data,
+                      headers={"Authorization": f"Bearer {API_KEY}"})
 
     await client.post("/data_import/contests/",
-                      json=contest_import_data)
+                      json=contest_import_data,
+                      headers={"Authorization": f"Bearer {API_KEY}"})
 
     await client.post("/data_import/songs/",
-                      json=song_import_data)
+                      json=song_import_data,
+                      headers={"Authorization": f"Bearer {API_KEY}"})

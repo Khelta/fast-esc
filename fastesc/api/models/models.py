@@ -115,6 +115,8 @@ class ParticipationPublic(ParticipationBase):
 
 
 class SongPublic(SongBase):
+    text: str
+
     artist: ArtistBase
     participations: List[ParticipationPublic]
 

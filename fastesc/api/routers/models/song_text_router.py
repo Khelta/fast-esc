@@ -4,7 +4,8 @@ from fastapi import APIRouter, Depends, Query, HTTPException
 
 from fastesc.api.dependencies import get_repository
 from fastesc.api.models.errors import ErrorResponse
-from fastesc.api.models.models import SongPublic, SongTextPublic
+from fastesc.api.models.models import SongTextPublic, SongWordCountPublic, SongPublic
+from fastesc.api.routers.helper import count_words
 from fastesc.database.models.models import Song as DB_Song
 from fastesc.database.repositories.base_repo import DatabaseRepository
 
@@ -45,9 +46,19 @@ async def find_in_songtext(repository: SongRepository,
                                                 offset=offset,
                                                 limit=limit)
 
+    if not case_sensitive:
+        text = text.lower()
+
+    song_texts = [song.text for song in songs]
+    word_counts = [count_words(text, song_text, case_sensitive, whole_word) for song_text in song_texts]
+
+    songs = [{**(SongPublic.model_validate(song).model_dump()), "word_count": word_counts[index]} for index, song in
+             enumerate(songs)]
+
     result = {
         "size": len(songs),
-        "songs": [SongPublic.model_validate(song) for song in songs]
+        "word_count": sum(word_counts),
+        "songs": [SongWordCountPublic.model_validate(song) for song in songs]
     }
 
     return SongTextPublic.model_validate(result)

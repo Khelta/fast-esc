@@ -118,7 +118,12 @@ class SongPublic(SongBase):
     text: str
 
     artist: ArtistBase
+    country: CountryBase
     participations: List[ParticipationPublic]
+
+
+class SongWordCountPublic(SongPublic):
+    word_count: int
 
 
 class CountryPublic(CountryBase):
@@ -130,4 +135,5 @@ class SongTextPublic(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
     size: int
-    songs: List[SongPublic]
+    word_count: int
+    songs: List[SongWordCountPublic]

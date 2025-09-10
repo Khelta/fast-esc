@@ -17,7 +17,7 @@ SongRepository = Annotated[
 ]
 
 
-@router.get("",
+@router.get("/find",
             response_model=SongTextPublic,
             responses={
                 400: {
@@ -62,3 +62,13 @@ async def find_in_songtext(repository: SongRepository,
     }
 
     return SongTextPublic.model_validate(result)
+
+
+@router.get("",
+            response_model=list[SongPublic],
+            )
+async def all_songs(repository: SongRepository,
+                    offset: int = Query(0, ge=0),
+                    limit: Optional[int] = Query(0, ge=0)) -> list[SongPublic]:
+    songs = await repository.filter(offset=offset, limit=limit)
+    return [SongPublic.model_validate(song) for song in songs]
